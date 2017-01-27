@@ -63,7 +63,7 @@ summary(MyDataID[,14])
 
 #<br>1.What are the main factors that influence the price of house in Boston?
 #<br>2.Which are the main cluster of houses that can be identify?
-#<br>3.What is the best prediction of the relative importance of those factors?
+#<br>3.What is the best predictions of the relative importance of those factors?( regression)
 
 
 ## Step 1: Confirm data is metric
@@ -71,7 +71,7 @@ summary(MyDataID[,14])
 ```{r, echo=FALSE}
 
 ProjectData=data.matrix(MyDataID) 
-MIN_VALUE=0.5
+MIN_VALUE=0.3
 max_data_report = 10
 colnames(ProjectData)
 
@@ -79,7 +79,7 @@ factor_attributes_used= c(1:15)
 
 # Please ENTER the selection criterions for the factors to use. 
 # Choices: "eigenvalue", "variance", "manual"
-factor_selectionciterion = "eigenvalue"
+factor_selectionciterion = "manual"
 
 # Please ENTER the desired minumum variance explained 
 # (ONLY USED in case "variance" is the factor selection criterion used). 
@@ -87,7 +87,7 @@ minimum_variance_explained = 65  # between 1 and 100
 
 # Please ENTER the number of factors to use 
 # (ONLY USED in case "manual" is the factor selection criterion used).
-manual_numb_factors_used = 2
+manual_numb_factors_used = 4
 
 # Please ENTER the rotation eventually used (e.g. "none", "varimax", "quatimax", "promax", "oblimin", "simplimax", and "cluster" - see help(principal)). Defauls is "varimax"
 rotation_used="varimax"
@@ -180,3 +180,38 @@ knitr::kable(Rotated_Factors_thres)
 ```
 
 
+Component nr 1 low status houses:
+
+1. CRIM      per capita crime rate by town
+3. INDUS     proportion of non-retail business acres per town
+7. AGE       proportion of owner-occupied units built prior to 1940
+5. NOX       nitric oxides concentration (parts per 10 million)
+13. LSTAT    % lower status of the population
+ 
+ 
+ Component nr 2 : hight value
+   12. ( inversely proportional :
+   B        1000(Bk - 0.63)^2 where Bk is the proportion of blacks 
+                 by town
+    9. RAD       index of accessibility to radial highways
+    10. TAX      full-value property-tax rate per $10,000
+                 
+
+    2. ZN        proportion of residential land zoned for lots over 
+                 25,000 sq.ft.
+   
+    4. CHAS      Charles River dummy variable (= 1 if tract bounds 
+                 river; 0 otherwise)
+  
+    6. RM        average number of rooms per dwelling
+   
+    8. DIS       weighted distances to five Boston employment centres
+  
+    11. PTRATIO  pupil-teacher ratio by town
+  
+   
+    14. MEDV     Median value of owner-occupied homes in $1000's
+
+```{r echo=FALSE, comment=NA, warning=FALSE, message=FALSE,results='asis'}
+> rmarkdown::render('Analysis of price housing of boston.Rmd')
+```
