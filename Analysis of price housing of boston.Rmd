@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 getwd()
-setwd("/Users/elena/Desktop/GroupProject")
+
 source("CopyOfAnalyticsLibraries/library.R")
 source("CopyOfAnalyticsLibraries/heatmapOutput.R")
 ```
@@ -71,15 +71,15 @@ summary(MyDataID[,14])
 ```{r, echo=FALSE}
 
 ProjectData=data.matrix(MyDataID) 
-MIN_VALUE=0.3
+MIN_VALUE=0.5
 max_data_report = 10
 colnames(ProjectData)
 
-factor_attributes_used= c(1:15)
+factor_attributes_used= c(2:14)
 
 # Please ENTER the selection criterions for the factors to use. 
 # Choices: "eigenvalue", "variance", "manual"
-factor_selectionciterion = "manual"
+factor_selectionciterion = "eingenvalue"
 
 # Please ENTER the desired minumum variance explained 
 # (ONLY USED in case "variance" is the factor selection criterion used). 
@@ -190,28 +190,5 @@ Component nr 1 low status houses:
  
  
  Component nr 2 : hight value
-   12. ( inversely proportional :
-   B        1000(Bk - 0.63)^2 where Bk is the proportion of blacks 
-                 by town
-    9. RAD       index of accessibility to radial highways
-    10. TAX      full-value property-tax rate per $10,000
-                 
 
-    2. ZN        proportion of residential land zoned for lots over 
-                 25,000 sq.ft.
-   
-    4. CHAS      Charles River dummy variable (= 1 if tract bounds 
-                 river; 0 otherwise)
-  
-    6. RM        average number of rooms per dwelling
-   
-    8. DIS       weighted distances to five Boston employment centres
-  
-    11. PTRATIO  pupil-teacher ratio by town
-  
-   
-    14. MEDV     Median value of owner-occupied homes in $1000's
 
-```{r echo=FALSE, comment=NA, warning=FALSE, message=FALSE,results='asis'}
-> rmarkdown::render('Analysis of price housing of boston.Rmd')
-```
