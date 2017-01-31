@@ -35,8 +35,9 @@ library("caret")
 <br>Whether the employee has left
 
 #The objectives of the project are the followings
-<br>Which of those factors influence the employeers leaving?
+<br>Which of those factors influence the employeers decison to left?
 <br>Who will leave next?
+<br>Is it possible to target with some specific strategy some department?
 
 #The project is divided in the following step
 <br>Step 1) Analyse actual state of the company HR indicators
