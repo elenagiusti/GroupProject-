@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Analysis of Hr indicators as predictor of employeers left</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Analysis of Hr indicators as predictor of employeers left">
+  <meta name="author" content="Giusti Elena">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="http://slidifylibraries2.googlecode.com/git/inst/libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/js/slides" 
+    src="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Analysis of Hr indicators as predictor of employeers left</h1>
+    <h2></h2>
+    <p>Giusti Elena<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <article data-timings="">
+    <p>###Human Resources Analytics
+##Why are our best and most experienced employees leaving prematurely?
+ Fields in the dataset include:</p>
+
+<p>Employee satisfaction level
+Last evaluation
+Number of projects
+Average monthly hours
+Time spent at the company
+Whether they have had a work accident
+Whether they have had a promotion in the last 5 years
+Department
+Salary
+Whether the employee has left</p>
+
+<pre><code class="r">myData &lt;- read.csv(file = &quot;DATA/HR_comma_sep.csv&quot;, header = TRUE, sep=&quot;,&quot;)
+# This are the project data with an added column of ID
+
+View(myData, header=FALSE)
+</code></pre>
+
+<pre><code>## Error in View(myData, header = FALSE): unused argument (header = FALSE)
+</code></pre>
+
+<pre><code class="r">colnames(myData)
+</code></pre>
+
+<pre><code>##  [1] &quot;satisfaction_level&quot;    &quot;last_evaluation&quot;      
+##  [3] &quot;number_project&quot;        &quot;average_montly_hours&quot; 
+##  [5] &quot;time_spend_company&quot;    &quot;Work_accident&quot;        
+##  [7] &quot;left&quot;                  &quot;promotion_last_5years&quot;
+##  [9] &quot;sales&quot;                 &quot;salary&quot;
+</code></pre>
+
+<p>####Questions</p>
+
+<p>What are the main factor influencing employers satisfaction
+Which of those factor influence the employeers leaving</p>
+
+<h2>Step 1: Confirm data is metric</h2>
+
+<pre><code>## Error in is.data.frame(frame): oggetto &quot;MyDataID&quot; non trovato
+</code></pre>
+
+<pre><code>## Error in is.data.frame(x): oggetto &quot;ProjectData&quot; non trovato
+</code></pre>
+
+<pre><code>## Error in ncol(ProjectData): oggetto &quot;ProjectData&quot; non trovato
+</code></pre>
+
+<pre><code>## Error in eval(expr, envir, enclos): oggetto &quot;ProjectData&quot; non trovato
+</code></pre>
+
+<pre><code>## Error in is.data.frame(frame): oggetto &quot;ProjectDataFactor&quot; non trovato
+</code></pre>
+
+<h2>Step 1: Confirm data is metric</h2>
+
+<pre><code class="r">knitr::kable(round(my_summary(ProjectDataFactor), 2))
+</code></pre>
+
+<pre><code>## Error in apply(thedata, 2, function(r) c(min(r), quantile(r, 0.25), quantile(r, : oggetto &quot;ProjectDataFactor&quot; non trovato
+</code></pre>
+
+<h2>Step 2: Scale the  data</h2>
+
+<pre><code class="r">ProjectDatafactor_scaled = apply(ProjectDataFactor, 2, function(r) {
+    if (sd(r) != 0) 
+        res = (r - mean(r))/sd(r) else res = 0 * r
+    res
+})
+</code></pre>
+
+<pre><code>## Error in apply(ProjectDataFactor, 2, function(r) {: oggetto &quot;ProjectDataFactor&quot; non trovato
+</code></pre>
+
+<p>Notice now the summary statistics of the scaled dataset:</p>
+
+<pre><code class="r">knitr::kable(round(my_summary(ProjectDatafactor_scaled), 2))
+</code></pre>
+
+<pre><code>## Error in apply(thedata, 2, function(r) c(min(r), quantile(r, 0.25), quantile(r, : oggetto &quot;ProjectDatafactor_scaled&quot; non trovato
+</code></pre>
+
+<h2>Step 3:  Check correlations</h2>
+
+<p>Check for correlation</p>
+
+<pre><code class="r">thecor = round(cor(ProjectDataFactor),2)
+</code></pre>
+
+<pre><code>## Error in is.data.frame(x): oggetto &quot;ProjectDataFactor&quot; non trovato
+</code></pre>
+
+<pre><code class="r">colnames(thecor)&lt;-colnames(ProjectDataFactor)
+</code></pre>
+
+<pre><code>## Error in is.data.frame(x): oggetto &quot;ProjectDataFactor&quot; non trovato
+</code></pre>
+
+<pre><code class="r">rownames(thecor)&lt;-colnames(ProjectDataFactor)
+</code></pre>
+
+<pre><code>## Error in is.data.frame(x): oggetto &quot;ProjectDataFactor&quot; non trovato
+</code></pre>
+
+<pre><code class="r">knitr::kable(round(thecor,2))
+</code></pre>
+
+<pre><code>## Error in inherits(x, &quot;list&quot;): oggetto &quot;thecor&quot; non trovato
+</code></pre>
+
+<p>Apply the facto analysis, set with eingvalue</p>
+
+<pre><code class="r">UnRotated_Results&lt;-principal(ProjectDataFactor, nfactors=ncol(ProjectDataFactor), rotate=&quot;none&quot;,score=TRUE)
+</code></pre>
+
+<pre><code>## Error in principal(ProjectDataFactor, nfactors = ncol(ProjectDataFactor), : oggetto &quot;ProjectDataFactor&quot; non trovato
+</code></pre>
+
+<pre><code class="r">UnRotated_Factors&lt;-round(UnRotated_Results$loadings,2)
+</code></pre>
+
+<pre><code>## Error in eval(expr, envir, enclos): oggetto &quot;UnRotated_Results&quot; non trovato
+</code></pre>
+
+<pre><code class="r">UnRotated_Factors&lt;-as.data.frame(unclass(UnRotated_Factors))
+</code></pre>
+
+<pre><code>## Error in as.data.frame(unclass(UnRotated_Factors)): oggetto &quot;UnRotated_Factors&quot; non trovato
+</code></pre>
+
+<pre><code class="r">colnames(UnRotated_Factors)&lt;-paste(&quot;Component&quot;,1:ncol(UnRotated_Factors),sep=&quot; &quot;)
+</code></pre>
+
+<pre><code>## Error in ncol(UnRotated_Factors): oggetto &quot;UnRotated_Factors&quot; non trovato
+</code></pre>
+
+<pre><code class="r">Variance_Explained_Table_results&lt;-PCA(ProjectDataFactor, graph=FALSE)
+</code></pre>
+
+<pre><code>## Error in as.data.frame(X): oggetto &quot;ProjectDataFactor&quot; non trovato
+</code></pre>
+
+<pre><code class="r">Variance_Explained_Table&lt;-Variance_Explained_Table_results$eig
+</code></pre>
+
+<pre><code>## Error in eval(expr, envir, enclos): oggetto &quot;Variance_Explained_Table_results&quot; non trovato
+</code></pre>
+
+<pre><code class="r">Variance_Explained_Table_copy&lt;-Variance_Explained_Table
+</code></pre>
+
+<pre><code>## Error in eval(expr, envir, enclos): oggetto &quot;Variance_Explained_Table&quot; non trovato
+</code></pre>
+
+<pre><code class="r">rownames(Variance_Explained_Table) &lt;- paste(&quot;Component&quot;, 1:nrow(Variance_Explained_Table))
+</code></pre>
+
+<pre><code>## Error in nrow(Variance_Explained_Table): oggetto &quot;Variance_Explained_Table&quot; non trovato
+</code></pre>
+
+<pre><code class="r">colnames(Variance_Explained_Table) &lt;- c(&quot;Eigenvalue&quot;, &quot;Pct of explained variance&quot;, &quot;Cumulative pct of explained variance&quot;)
+</code></pre>
+
+<pre><code>## Error in colnames(Variance_Explained_Table) &lt;- c(&quot;Eigenvalue&quot;, &quot;Pct of explained variance&quot;, : oggetto &quot;Variance_Explained_Table&quot; non trovato
+</code></pre>
+
+<pre><code class="r">knitr::kable(round(Variance_Explained_Table, 2))
+</code></pre>
+
+<pre><code>## Error in inherits(x, &quot;list&quot;): oggetto &quot;Variance_Explained_Table&quot; non trovato
+</code></pre>
+
+<pre><code class="r">eigenvalues  &lt;- Variance_Explained_Table[, &quot;Eigenvalue&quot;]
+</code></pre>
+
+<pre><code>## Error in eval(expr, envir, enclos): oggetto &quot;Variance_Explained_Table&quot; non trovato
+</code></pre>
+
+<pre><code class="r">df           &lt;- cbind(as.data.frame(eigenvalues), c(1:length(eigenvalues)), rep(1, length(eigenvalues)))
+</code></pre>
+
+<pre><code>## Error in as.data.frame(eigenvalues): oggetto &quot;eigenvalues&quot; non trovato
+</code></pre>
+
+<pre><code class="r">colnames(df) &lt;- c(&quot;eigenvalues&quot;, &quot;components&quot;, &quot;abline&quot;)
+</code></pre>
+
+<pre><code>## Error in `colnames&lt;-`(`*tmp*`, value = c(&quot;eigenvalues&quot;, &quot;components&quot;, : attempt to set &#39;colnames&#39; on an object with less than two dimensions
+</code></pre>
+
+<pre><code class="r">ggplot(melt(df, id=&quot;components&quot;), aes(x=components, y=value, colour=variable)) + geom_line()
+</code></pre>
+
+<pre><code>## Don&#39;t know how to automatically pick scale for object of type function. Defaulting to continuous.
+</code></pre>
+
+<pre><code>## Error in eval(expr, envir, enclos): oggetto &quot;components&quot; non trovato
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk figure01"></p>
+
+<pre><code class="r">Rotated_Results&lt;-principal(ProjectDatafactor_scaled, nfactors=max(3), rotate=rotation_used,score=TRUE)
+</code></pre>
+
+<pre><code>## Error in principal(ProjectDatafactor_scaled, nfactors = max(3), rotate = rotation_used, : oggetto &quot;ProjectDatafactor_scaled&quot; non trovato
+</code></pre>
+
+<pre><code class="r">Rotated_Factors&lt;-round(Rotated_Results$loadings,2)
+</code></pre>
+
+<pre><code>## Error in eval(expr, envir, enclos): oggetto &quot;Rotated_Results&quot; non trovato
+</code></pre>
+
+<pre><code class="r">Rotated_Factors&lt;-as.data.frame(unclass(Rotated_Factors))
+</code></pre>
+
+<pre><code>## Error in as.data.frame(unclass(Rotated_Factors)): oggetto &quot;Rotated_Factors&quot; non trovato
+</code></pre>
+
+<pre><code class="r">colnames(Rotated_Factors)&lt;-paste(&quot;Component&quot;,1:ncol(Rotated_Factors),sep=&quot; &quot;)
+</code></pre>
+
+<pre><code>## Error in ncol(Rotated_Factors): oggetto &quot;Rotated_Factors&quot; non trovato
+</code></pre>
+
+<pre><code class="r">sorted_rows &lt;- sort(Rotated_Factors[,1], decreasing = TRUE, index.return = TRUE)$ix
+</code></pre>
+
+<pre><code>## Error in sort(Rotated_Factors[, 1], decreasing = TRUE, index.return = TRUE): oggetto &quot;Rotated_Factors&quot; non trovato
+</code></pre>
+
+<pre><code class="r">Rotated_Factors &lt;- Rotated_Factors[sorted_rows,]
+</code></pre>
+
+<pre><code>## Error in eval(expr, envir, enclos): oggetto &quot;Rotated_Factors&quot; non trovato
+</code></pre>
+
+<pre><code class="r">knitr::kable(Rotated_Factors)
+</code></pre>
+
+<pre><code>## Error in inherits(x, &quot;list&quot;): oggetto &quot;Rotated_Factors&quot; non trovato
+</code></pre>
+
+<p>Here is the result of 3 principal factoor chosen </p>
+
+<pre><code>Error in eval(expr, envir, enclos): oggetto &quot;Rotated_Factors&quot; non trovato
+</code></pre>
+
+<pre><code>Error in Rotated_Factors_thres[abs(Rotated_Factors_thres) &lt; MIN_VALUE] &lt;- NA: oggetto &quot;Rotated_Factors_thres&quot; non trovato
+</code></pre>
+
+<pre><code>Error in is.data.frame(x): oggetto &quot;Rotated_Factors&quot; non trovato
+</code></pre>
+
+<pre><code>Error in rownames(Rotated_Factors): oggetto &quot;Rotated_Factors&quot; non trovato
+</code></pre>
+
+<pre><code>Error in inherits(x, &quot;list&quot;): oggetto &quot;Rotated_Factors_thres&quot; non trovato
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='NA'>
+         1
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="http://slidifylibraries2.googlecode.com/git/inst/libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

@@ -1,5 +1,5 @@
 ---
-title: "AnalysisofSanFranciscoAirport"
+title: "Analysis of Hr indicators as predictor of employeers left"
 author: "Giusti Elena"
 date: ""
 output: html_document
@@ -11,48 +11,71 @@ getwd()
 
 source("CopyOfAnalyticsLibraries/library.R")
 source("CopyOfAnalyticsLibraries/heatmapOutput.R")
+
 ```
 
-##This doccument is a re
+###Human Resources Analytics
+##Why are our best and most experienced employees leaving prematurely?
+ Fields in the dataset include:
 
-    
-    Target variable to predict: pricing of house MEDIAN
-    
-```{r, echo=FALSE}
+Employee satisfaction level
+Last evaluation
+Number of projects
+Average monthly hours
+Time spent at the company
+Whether they have had a work accident
+Whether they have had a promotion in the last 5 years
+Department
+Salary
+Whether the employee has left
 
-myData <- read.csv(file =  ", header = TRUE, sep=";")
+```{r, echo=TRUE,eval=TRUE}
+
+myData <- read.csv(file = "DATA/HR_comma_sep.csv", header = TRUE, sep=",")
 # This are the project data with an added column of ID
 
 View(myData, header=FALSE)
-Price_of_Houses <- myData[,14]
-ID<-c(1:506)
-MyDataID <-cbind(ID,myData)
-
-#HERE IS EXPLAINED THAT IS THE  Median value of owner-occupied homes in $1000's the value to identify
-
-plot(MyDataID[,c(1,14)])
-summary(MyDataID[,14])
+colnames(myData)
+summary(myData)
 
 ```
+We can make a few observations about the columns –
+
+satisfaction_level: A numeric indictor, presumably (?) filled out by the employee.
+last_evaluation: A numeric indicator, presumably filled in by the employee’s manager.
+number_project: A integer - perhaps the number of projects the employee has worked on. Is this something like construction?
+average_monthly_hours: The number of hours they work (billed?) in the month. On average?
+time_spend_company: An integer value, perhaps years of service.
+Work_accident: Looks like a boolean value, probably whether or not they had an accident.
+left: Looks like a boolean value, leave or not.
+promoted_last_5years: Looks like a boolean value.
+sales: department
+salary: Looks like a 3-level salary score (low, medium, high)
+
+From basic statistic we see that the overall satisfaction of the company is around 
+63% and that 24% of the employees left.
 
 
 ####Questions
 
-#<br>1.What are the main factors that influence the price of house in Boston?
-#<br>2.Which are the main cluster of houses that can be identify?
-#<br>3.What is the best predictions of the relative importance of those factors?( regression)
+What are the main factor influencing employers satisfaction?
+Which of those factor influence the employeers leaving?
 
 
-## Step 1: Confirm data is metric
+1. Check for correlation
 
-```{r, echo=FALSE}
+```{r setup, include=FALSE}
+CorTable <- cor(myData[,1:6])
 
-ProjectData=data.matrix(MyDataID) 
+
+ProjectData <- data.matrix(myData)
+
 MIN_VALUE=0.5
 max_data_report = 10
-colnames(ProjectData)
 
-factor_attributes_used= c(2:14)
+colnames("ProjectData")
+
+factor_attributes_used= c(1:6)
 
 # Please ENTER the selection criterions for the factors to use. 
 # Choices: "eigenvalue", "variance", "manual"
@@ -74,7 +97,13 @@ ProjectDataFactor=ProjectData[,factor_attributes_used]
 ProjectDataFactor <- ProjectData <- data.matrix(ProjectDataFactor)
 ```
 
-## Step 1: Confirm data is metric
+## Question 1 :  Describe the overall data 
+
+
+
+
+
+## Step : Confirm data is metric
 
 ```{r}
 knitr::kable(round(my_summary(ProjectDataFactor), 2))
@@ -90,9 +119,6 @@ Notice now the summary statistics of the scaled dataset:
 knitr::kable(round(my_summary(ProjectDatafactor_scaled), 2))
 ```
 
-## Step 3:  Check correlations 
-Check for correlation
-
 ```{r}
 thecor = round(cor(ProjectDataFactor),2)
 colnames(thecor)<-colnames(ProjectDataFactor)
@@ -101,6 +127,7 @@ rownames(thecor)<-colnames(ProjectDataFactor)
 knitr::kable(round(thecor,2))
 
 ```
+
 
 Apply the facto analysis, set with eingvalue
 
@@ -122,50 +149,3 @@ colnames(Variance_Explained_Table) <- c("Eigenvalue", "Pct of explained variance
 
 knitr::kable(round(Variance_Explained_Table, 2))
 ```
-
-```{r figure01}
-eigenvalues  <- Variance_Explained_Table[, "Eigenvalue"]
-df           <- cbind(as.data.frame(eigenvalues), c(1:length(eigenvalues)), rep(1, length(eigenvalues)))
-colnames(df) <- c("eigenvalues", "components", "abline")
-ggplot(melt(df, id="components"), aes(x=components, y=value, colour=variable)) + geom_line()
-```
-
-
-
-```{r}
-
-Rotated_Results<-principal(ProjectDatafactor_scaled, nfactors=max(3), rotate=rotation_used,score=TRUE)
-Rotated_Factors<-round(Rotated_Results$loadings,2)
-Rotated_Factors<-as.data.frame(unclass(Rotated_Factors))
-colnames(Rotated_Factors)<-paste("Component",1:ncol(Rotated_Factors),sep=" ")
-
-sorted_rows <- sort(Rotated_Factors[,1], decreasing = TRUE, index.return = TRUE)$ix
-Rotated_Factors <- Rotated_Factors[sorted_rows,]
-
-knitr::kable(Rotated_Factors)
-```
-
-Here is the result of 3 principal factoor chosen 
-
-```{r echo=FALSE, comment=NA, warning=FALSE, message=FALSE,results='asis'}
-Rotated_Factors_thres <- Rotated_Factors
-Rotated_Factors_thres[abs(Rotated_Factors_thres) < MIN_VALUE]<-NA
-colnames(Rotated_Factors_thres)<- colnames(Rotated_Factors)
-rownames(Rotated_Factors_thres)<- rownames(Rotated_Factors)
-
-knitr::kable(Rotated_Factors_thres)
-```
-
-
-Component nr 1 low status houses:
-
-1. CRIM      per capita crime rate by town
-3. INDUS     proportion of non-retail business acres per town
-7. AGE       proportion of owner-occupied units built prior to 1940
-5. NOX       nitric oxides concentration (parts per 10 million)
-13. LSTAT    % lower status of the population
- 
- 
- Component nr 2 : hight value
-
-
