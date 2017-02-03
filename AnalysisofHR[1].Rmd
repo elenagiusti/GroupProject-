@@ -32,6 +32,7 @@ library(DT)
 ```
 
 
+
 #Human Resources Analytics
 ##How do we retain our best and most experienced employees?
 
@@ -63,6 +64,7 @@ library(DT)
 <br>Step 3) Principal Component Analysis
 <br>Step 4) Futher comparative analysis on employees that left
 <br>Step 5) Prediction Model
+<br> Step 7) Conclusion
 
 ##Step 1: Data quality check:as a first step we will perform basic statistical analysis and understand the type of factors.
 
@@ -217,7 +219,7 @@ corrplot(thecor2, method="circle" , title = "Correlation Heat map of employees w
 <br/>
 <br/>
 <br/>
-<br/>
+###OBSERVATIONS:
 <br/> As a conclusion we can see how the only singnigicant correlation that we can find are across the subgroup of the employees that have left.
 
 
@@ -348,15 +350,17 @@ knitr::kable(Rotated_Factors_thres)
 <br>Based on eingvalue we can see that database can be reduced to three principal components that we try to interpret:
 
 <br>Component 1 (number of project, monthly hours, last evaluation):  we will call this component "commitment"
-<br>Component 2 : 
-<br>Component 3: salary+promotion we can call this component remunaration
-only satisfaction
+<br>Component 2 : (salary, promotion) we can call this component "compensation"
+<br>Component 3: (time spent at company, satisfaction) we can call this component "work-life balance"
+<br>Component 4:  (department, work accident) we can call this component "role"
 
+###OBSERVATIONS:
+<br>PCA seems to be logically consistent in lowering the number of component to 4. We can infer that number of project, monthly hours, last evaluation ( commitment) is group most interrelated variables.
+However given the limited number independent variables that we have in the dataset and the limited correlation across those variables we can conclude that PCA is not particularly useful in our case.
 
-CONCLUSION: principal component analisys allow to easily have a lower number of factor to describe the dataset, however the limited number of dependent variable we can conclude is not particularly useful in this case.
+##Step 4) Futher comparative analysis on employees that left
 
-##Step 5: Build a regression model to estimate who will be more likely to leave
-
+<br>We than look more closely to employees that left but in this case we directly compare them to those who haven't left
 
 ```{r ,echo=FALSE, tidy=TRUE}
 myData3 <- read.csv("DATA/HR_comma_sep.csv")
@@ -375,7 +379,7 @@ kable(des[[2]])
 
 Here we can have a overview of the data; for example, there are `r table(myData3$left)[2]` observations in `1` group, values of mean and median of `satisfaction` in `1` group is smaller than `0` group's. The correlation plot show some relationships of first 8 variables. Obviously, with lower satisfaction level, employees will have stronger desire to leave. If someone can deal with more projects and spend more time on work, he or she will obtain higher evaluation.
 
-### Predicting Who Will Leave?
+###Plot the two subset one against the other
 
 we may find the evidence who will leave next.
 
@@ -437,7 +441,7 @@ Here are some reasons I've gotten from above analysis:
 
 ### Who Are Valuable Employees And Why Do They Leave?
 
-In my view, the employees with evaluation `>=0.65`, equal or more than 3-year-experience in the company and equal or more than 5 projects in hand can be considered to be experienced and valuable ones for a company. More than half of the experienced ones left. It seems that they suffer from:
+In my view, the employees with evaluation `>=0.72`, equal or more than 3-year-experience in the company and equal or more than  4 projects in hand can be considered to be experienced and valuable ones for a company. More than half of the experienced ones left. It seems that they suffer from:
 
 - low level of satisfaction
 
@@ -449,7 +453,7 @@ In my view, the employees with evaluation `>=0.65`, equal or more than 3-year-ex
 
 
 ```{r ,echo=FALSE, tidy=TRUE}
-valuable <- myData3[myData3$evaluation>=.65 & myData3$years>=3 & myData3$project>=5,]
+valuable <- myData3[myData3$evaluation>=.72 & myData3$years>=3 & myData3$project>=4,]
 prop.table(table(valuable$left))
 tableplot(valuable,sortCol=left,nBins=60)
 ggplot(valuable,aes(x=left,y=satisfaction,fill=left))+
@@ -460,7 +464,7 @@ ggplot(valuable,aes(x=left,y=satisfaction,fill=left))+
 We can find some employees with high sense of satisfaction also left in the box plot. The table plot shows they sustain the same problems with other left ones. Maybe there are still some reasons out of the dataset.
 
 
-##Step 6: Train And Prediction
+##Step 5: Prediction Model
 
 It's time for us to model. We may get a good one to predict who will leave next.We will split the dataset into two parts, `train` and `test`. A classification tree will be built firstly, then forest.
 
@@ -492,8 +496,10 @@ rf_mdl <- randomForest(left~.,data=train,mtry=7,importance=T)
 rf_pred <- predict(rf_mdl,test,type="response")
 confusionMatrix(rf_pred,test$left)
 ```
+##Step 7: Conclusion
 
 So, `rf_mdl` works better, and which variable is the most important? From importance of variables, we can infer reasons that employees left, especially experienced and valuable ones.
+
 
 ```{r imp, echo=FALSE, tidy=TRUE}
 importance <- data.frame(var=row.names(importance(rf_mdl)),importance=importance(rf_mdl)[,4])
@@ -503,11 +509,10 @@ ggplot(importance,aes(x=reorder(var,importance),y=importance))+
   labs(title="Importance of Variables")
 ```
 
-##Step 7: Conclusion
+
 
 In our opinion Improving level of satisfaction is the key to keep employees remain. While, reasonable workload and working time, promotion and appropriate salary increasing can be useful measures to achieve the key. There is no doubt a valuable employee is important to a company, whether he or she is an experienced or potential one.
 
 
-
-https://www.kaggle.com/msjgriffiths/d/ludobenistant/hr-analytics/explore-explain-density-decision-trees
+Our conclusion is 
 
