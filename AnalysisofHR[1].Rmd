@@ -373,7 +373,7 @@ require(tabplot)
 myData3$left <- as.factor(myData3$left)
 myData3$accident <- as.factor(myData3$accident)
 myData3$promotion <- as.factor(myData3$promotion)
-tabplot::tableplot(myData3,sortCol=left)
+tableplot(myData3,sortCol=left)
 ```
 
 Wile the table plot can show us enough features, We should do some more plots to analyse further

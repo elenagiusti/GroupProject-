@@ -112,10 +112,4 @@ iplot.dendrogram <- function(cluster) {
       xlab("Observations") + ylab("Height")
   }
 }
-install.packages("randomForest","pary","AUC","caret")
-library("randomForest")
-library("party")
-library("AUC")
-library("caret")
-
 
